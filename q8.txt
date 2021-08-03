@@ -1,0 +1,1964 @@
+https://kodekloud.com/courses/675080/lectures/12038859
+http://www.yamllint.com/
+json2yaml.com
+https://app.slack.com/client/TDSBA9B9V/CDR4R9Z7E
+https://www.abercrombie.com/shop/wd/p/sherpa-lined-vest-34311819?categoryId=12221&seq=01&faceout=prod
+http://kubernetesbyexample.com/
+CKA Certified Kubernetes Administrator
+https://www.katacoda.com/courses/kubernetes
+
+#################### Pods #################################################################
+How many PODs exist on the system?
+kubectl get pods
+
+Create a new pod with the NGINX image
+kubectl run nginx --image=nginx --generator=run-pod/v1
+
+What is the image used to create the new pods?
+kubectl get pods -o wide
+kubectl describe pods newpods-xcm2m
+
+
+Which nodes are these pods placed on?
+kubectl get pods -o wide
+
+
+How many containers are part of the pod 'webapp'?
+kubectl describe pod webapp | less
+
+
+What is the state of the container 'agentx' in the pod 'webapp'?
+kubectl describe pod webapp
+
+
+Delete the 'webapp' Pod.
+Once deleted, wait for the pod to fully terminate.
+
+Create a new pod with the name 'redis' and with the image 'redis123'
+
+kubectl run redis --image=redis123 --generator=run-pod/v1
+
+
+
+Now fix the image on the pod to 'redis'.
+Update the pod-definition file and use 'kubectl apply' command or use 'kubectl edit pod redis' command.
+
+kubectl apply
+kubectl edit pod redis
+#################### ReplicaSets ##########################################################
+
+How many PODs exist on the system?
+kubectl get pods
+
+How many ReplicaSets exist on the system?
+kubectl get replicaset
+kubectl get rs
+
+How many PODs are DESIRED in the new-replica-set?
+Run the command 'kubectl get replicaset' and look at the count under the 'Desired' column
+
+
+What is the image used to create the pods in the new-replica-set?
+kubectl describe replicaset
+
+How many PODs are READY in the new-replica-set?
+
+Run the command 'kubectl get replicaset' and look at the count under the 'Ready' column
+
+
+Why do you think the PODs are not ready?
+
+Run the command 'kubectl describe pods' and look under the events section.
+
+
+Create a ReplicaSet using the 'replicaset-definition-1.yaml' file located at /root/
+There is an issue with the file, so fix it.
+
+apiVersion: apps/v1
+
+
+Delete the two newly created ReplicaSets - replicaset-1 and replicaset-2
+kubectl delete rs replicaset-1
+kubectl delete rs replicaset-2
+
+
+
+
+Fix the original replica set 'new-replica-set' to use the correct 'busybox' image
+Either delete and re-create the ReplicaSet or Update the existing ReplicSet and then delete all PODs, so new ones with the correct image will be created.
+
+Run the command 'kubectl edit replicaset new-replica-set', modify the image name and then save the file.
+After delete the pods that was created .
+
+
+
+Scale the ReplicaSet to 5 PODs
+Use 'kubectl scale' command or edit the replicaset using 'kubectl edit replicaset'
+
+Now scale the ReplicaSet down to 2 PODs
+Use 'kubectl scale' command or edit the replicaset using 'kubectl edit replicaset'
+
+Run the command 'kubectl edit replicaset new-replica-set', modify the replicas and then save the file.
+#################### Deployments ##########################################################
+
+How many Deployments exist on the system?
+kubectl get deployment
+
+Out of all the existing PODs, how many are ready?
+Run the command 'kubectl get deployment' and count the number of PODs.
+
+
+What is the image used to create the pods in the new deployment?
+Run the command 'kubectl describe deployment' and look under the containers section.
+
+Why do you think the deployment is not ready?
+Run the command 'kubectl describe pods' and look under the events section.
+
+Create a new Deployment using the 'deployment-definition-1.yaml' file located at /root/
+There is an issue with the file, so try to fix it.
+
+The value for 'kind' is incorrect. It should be 'Deployment' with a capital 'D'.
+#################### Namespaces ###########################################################
+How many Namespaces exist on the system?
+kubectl get namespace
+kubectl get ns
+
+How many pods exist in the 'research' namespace?
+kubectl get pods --namespace=research
+
+Create a POD in the 'finance' namespace.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+  namespace: finance
+  labels:
+    app: redis
+    segment: cache
+spec:
+  containers:
+  - name: redis
+    image: redis
+
+Which namespace has the 'blue' pod in it?
+Run the command 'kubectl get pods --all-namespaces'.
+
+
+What DNS name should the Blue application use to access the database 'db-service' in its own namespace - 'marketing'.
+kubectl get svc --namespace=marketing
+kubectl get svc --namespace=dev
+kubectl get svc --namespace=kube-system
+kubectl describe ns dev
+kubectl config view
+#################### Test Services  #######################################################
+
+How many Services exist on the system?
+kubectl get service
+kubectl get svc
+
+That is a default service created by Kubernetes at launch.
+kubectl get service
+
+What is the type of the default 'kubernetes' service?
+kubectl get service
+
+What is the 'targetPort' configured on the 'kubernetes' service?
+Run the command 'kubectl describe service' and look at TargetPort.
+
+
+How many labels are configured on the 'kubernetes' service?
+Run the command 'kubectl describe service' and look at Labels.
+
+How many Endpoints are attached on the 'kubernetes' service?
+Run the command 'kubectl describe service' and look at Endpoints.
+
+How many Deployments exist on the system now?
+Run the command 'kubectl get deployment' and count the number of pods.
+
+What is the image used to create the pods in the deployment?
+Run the command 'kubectl describe deployment' and look under the containers section.
+
+#################### Practice Test  #######################################################
+Deploy a pod named nginx-pod using the nginx:alpine image.
+kubectl run --generator=run-pod/v1 nginx-pod --image=nginx:alpine
+
+Deploy a redis pod using the redis:alpine image with the labels set to tier=db.
+kubectl run --generator=run-pod/v1 redis --image=redis:alpine -l tier=db
+
+
+Create a service redis-service to expose the redis application within the cluster on port 6379.
+kubectl expose pod redis --port=6379 --name redis-service
+
+Create a deployment named webapp using the image kodekloud/webapp-color with 3 replicas
+kubectl create deployment webapp --image=kodekloud/webapp-color
+kubectl scale deployment/webapp --replicas=3
+
+
+Expose the webapp as service webapp-service application on port 30082 on the nodes on the cluster
+kubectl expose deployment webapp --type=NodePort --port=8080 --name=webapp-service --dry-run -o yaml > webapp-service.yaml
+then add nodePort: in the webapp-service.yaml
+
+#################### Manual Scheduling  ###################################################
+
+Why is the POD in a pending state?
+kubectl get pods --namespace kube-system
+there is no Scheduler
+
+Manually schedule the pod on node01
+set nodeName  on the pod yaml file and delete the current pod then recreate
+kubectl get pods -o wide
+
+Now schedule the same pod on the master node.
+set nodeName  on the pod yaml file and delete the current pod then recreate
+kubectl get pods -o wide
+
+#################### Labels and Selectors  ################################################
+We have deployed a number of PODs. They are labelled with 'tier', 'env' and 'bu'. How many PODs exist in the 'dev' environment?
+Use selectors to filter the output
+kubectl get pods --selector env=dev
+
+How many PODs are in the 'finance' business unit ('bu')?
+kubectl get pods --selector bu=finance
+
+How many objects are in the 'prod' environment including PODs, ReplicaSets and any other objects?
+kubectl get all --selector env=prod
+
+Identify the POD which is 'prod', part of 'finance' BU and is a 'frontend' tier?
+kubectl get all --selector env=prod,bu=finance,tier=frontend
+
+#################### Taints and Toleration  ###############################################
+
+How many Nodes exist on the system? including the master node
+kubectl get nodes
+
+Do any taints exist on node01?
+kubectl describe node node01
+kubectl describe node node01 | grep Taints
+
+Create a taint on node01 with key of 'spray', value of 'mortein' and effect of 'NoSchedule'
+kubectl taint nodes node01 spray=mortein:NoSchedule
+
+Do you see any taints on master node?
+kubectl describe node master
+kubectl describe node master | grep Taint
+
+
+Remove the taint on master, which currently has the taint effect of NoSchedule
+kubectl taint nodes master node-role.kubernetes.io/master:NoSchedule-
+
+Which node is the POD 'mosquito' on now?
+kubectl get pods -o wide
+
+#################### Node Affinity  #######################################################
+How many Labels exist on node node01
+Run the command 'kubectl describe node node01' and count the number of labels.
+
+What is the value set to the label beta.kubernetes.io/arch on node01?
+Run the command 'kubectl describe node node01' and see the label section
+
+Apply a label color=blue to node node01
+kubectl label node node01 color=blue
+kubectl label node node01 color=large
+kubectl label node node01 color=smale
+
+
+Create a new deployment named 'blue' with the NGINX image and 6 replicas
+
+kubectl run blue --image=nginx --replicas=6
+
+Which nodes are the PODs placed on?
+
+Set Node Affinity to the deployment to place the PODs on node01 only
+
+
+Which nodes are the PODs placed on now?
+kubectl get pods -o wide
+#################### Resource Limits  #####################################################
+A pod named 'rabbit' is deployed. Identify the CPU requirements set on the Pod
+in the current(default) namespace
+
+kubectl describe pod rabbit
+
+Inspect the pod elephant and identify the status.
+kubectl get pods
+OOMKilled >> ran out of memory.
+
+The status 'OOMKilled' indicates that the pod ran out of memory. Identify the memory limit set on the POD.
+kubectl describe pod elephant
+
+
+The elephant runs a process that consume 15Mi of memory. Increase the limit of the elephant pod to 20Mi.
+Delete and recreate the pod if required. Do not modify anything other than the required fields.
+
+kubectl get pods --output=yaml > pod.yaml
+then change the memoery and create the pod again
+
+#################### DaemonSets       #####################################################
+How many DaemonSets are created in the cluster in all namespaces?
+kubectl get daemonsets --all-namespaces
+
+Which namespace are the DaemonSets created in?
+Run the command kubectl get daemonsets --all-namespaces and look for namespace column
+
+Which of the below is a DaemonSet?
+Run the command kubectl get all --all-namespaces and identify the types
+
+On how many nodes are the pods scheduled by the DaemonSet kube-proxy
+kubectl describe daemonset kube-proxy --namespace=kube-system
+
+What is the image used by the POD deployed by the weave-net DaemonSet?
+kubectl get daemonset  --namespace=kube-system
+#################### Static Pods       ####################################################
+
+How many static pods exist in this cluster in all namespaces?
+Run the command kubectl get pods --all-namespaces and look for those with -master appended in the name
+
+On what nodes are the static pods created?
+Run the kubectl get pods --all-namespaces -o wide
+
+
+What is the path of the directory holding the static pod definition files?
+Run the command ps -aux | grep kubelet and identify the config file - --config=/var/lib/kubelet/config.yaml. Then check in the config file for staticPdPath.
+
+How many pod definition files are present in the manifests folder?
+/etc/kubernetes/manifests there is 4 files under this folder
+
+What is the docker image used to deploy the kube-api server as a static pod?
+Check the image defined in the /etc/kubernetes/manifests/kube-apiserver.yaml manifest file.
+
+Create a static pod named static-busybox that uses the busybox image and the command sleep 1000
+kubectl run --restart=Never --image=busybox static-busybox --dry-run -o yaml --command -- sleep 1000 > /etc/kubernetes/manifests/static-busybox.yaml
+
+#################### Multiple Schedulers      #############################################
+
+What is the name of the POD that deploys the default kubernetes scheduler in this environment?
+kubectl get pods --namespace=kube-system
+
+What is the image used to deploy the kubernetes scheduler?
+kubectl describe pod kube-scheduler-master --namespace=kube-system
+
+
+Deploy an additional scheduler to the cluster following the given specification.
+Use the manifest file used by kubeadm tool. Use a different port than the one used by the current one.
+
+#################### Monitoring cluster       #############################################
+We have deployed a few PODs running workloads. Inspect it.
+You have to download these metrics
+https://github.com/kodekloudhub/kubernetes-metrics-server.git
+after you have to install it by this command
+kubectl create -f .
+
+kubectl top node
+
+
+If you are looking for logs
+kubectl logs pod-name
+kubectl logs webapp-2
+
+If you have many container in your pod
+kubectl logs pod-name container-name
+kubectl logs webapp-2 simple-webapp
+#################### Rolling Updates and Rollbacks      ###################################
+
+Inspect the deployment and identify the number of PODs deployed by it
+Run the command 'kubectl describe deployment' and look at 'Desired Replicas'
+
+Inspect the deployment and identify the current strategy
+Run the command 'kubectl describe deployment' and look at 'StrategyType'
+
+Let us try that. Upgrade the application by setting the image on the deployment to 'kodekloud/webapp-color:v2'
+Do not delete and re-create the deployment. Only set the new image name for the existing deployment.
+
+Run the command 'kubectl edit deployment frontend' and modify the required feild
+
+
+Up to how many PODs can be down for upgrade at a time
+Consider the current strategy settings and number of PODs - 4
+
+Change the deployment strategy to 'Recreate'
+Do not delete and re-create the deployment. Only update the strategy type for the existing deployment.
+strategy:
+    type: Recreate
+
+#################### Kubernetes Commands and Arguments   ##################################
+
+What is the command used to run the pod 'ubuntu-sleeper'?
+
+kubectl describe pod and look under command option
+
+#################### Variables and Config Maps   ##########################################
+
+What is the environment variable name set on the container in the pod?
+Run the command 'kubectl describe pod' and look for ENV option
+
+how to take copy from the current pod
+kubectl get pods webapp-color --output=yaml > pod.yaml
+
+
+How many ConfigMaps exist in the environment?
+kubectl get configmaps
+
+
+Identify the database host from the config map 'db-config'
+Run the command 'kubectl describe configmaps' and look for DB_HOST option
+
+
+Create a new ConfigMap for the 'webapp-color' POD. Use the spec given on the right.
+
+kubectl create configmap webapp-config-map --from-literal APP_COLOR=darkblue
+
+
+Update the environment variable on the POD use the newly created ConfigMap
+Note: Delete and recreate the POD. Only make the necessary changes. Do not modify the name of the Pod.
+envFrom:
+      - configMapRef:
+          name: special-config
+#################### test Secrets   #######################################################
+How many Secrets exist on the system?
+in the current(default) namespace
+
+kubectl get secrets
+
+How many secrets are defined in the 'default-token' secret?
+Run the command 'kubectl get secrets' and look at the DATA field
+
+
+What is the type of the 'default-token' secret?
+kubectl describe secret
+
+
+The reason the application is failed is because we have not created the secrets yet. Create a new Secret named 'db-secret' with the data given(on the right).
+You may follow any one of the methods discussed in lecture to create the secret.
+
+kubectl create secret generic db-secret --from-literal=DB_Host=sql01 --from-literal=DB_User=root --from-literal=DB_Password=password123
+====================================
+envFrom:                # envFrom
+    - secretRef:
+        name: db-db-secret
+====================================
+
+#################### Test - Multi-Container Pods   ########################################
+Identify the number of containers running in the 'red' pod.
+kubectl describe pod red
+
+initContainers:
+ - name: init-myservice
+   image: busybox
+   command: ['sh', '-c', 'git clone <some-repository-that-will-be-used-by-application> ; done;']
+
+The 'app'lication outputs logs to the file /log/app.log. View the logs and try to identify the user having issues with Login.
+
+kubectl exec -it app cat /log/app.log'
+kubectl delete  pods app  --namespace=elastic-stack
+#################### Test - Init Containers   ############################################
+Identify the pod that has an initContainer configured.
+ kubectl get pods blue --output=yaml | grep initContainers
+
+ We just created a new app named purple. How many initContainers does it have?
+
+
+ Run the command kubectl describe pod purple
+
+
+ How long after the creation of the POD will the application come up and be available to users?
+
+#################### Cluster Maintenance - Node Maintenance   #############################
+We need to take node01 out for maintenance. Empty the node of all applications and mark it unschedulable.
+kubectl drain node01 --ignore-daemonsets
+
+What nodes are the apps on now?
+kubectl get pods -o wide
+
+The maintenance tasks have been completed. Configure the node to be schedulable again.
+kubectl uncordon node01
+
+Why are there no pods placed on the master node?
+Check the master node details
+kubectl describe node master
+
+It is now time to take down node02 for maintenance. Before you remove all workload from node02 answer the following question.
+Can you drain node02 using the same command as node01?
+No you have to force it
+kubectl drain node02 --ignore-daemonsets --force
+
+
+Node03 has our critical applications. We do not want to schedule any more apps on node03. Mark node03 as unschedulable but do not remove any apps currently running on it .
+kubectl cordon node03
+
+#################### Practice Upgrading a Cluste    #######################################
+This lab tests your skills on upgrading a kubernetes cluster. We have a production cluster with applications running on it. Let us explore the setup first.
+What is the current version of the cluster?
+kubectl get node
+
+How many nodes can host workloads in this cluster?
+Inspect the applications
+kubectl get pods -o wide
+
+
+How many applications are hosted on the cluster?
+kubectl get deployment
+
+
+What is the latest stable version available for upgrade?
+Use kubeadm tool
+
+kubeadm upgrade plan
+
+We will be upgrading the master node first. Drain the master node of workloads and mark it UnSchedulable
+kubectl drain master --ignore-daemonsets
+
+
+
+Upgrade the master components to v1.12.0
+
+
+Upgrade kubeadm tool, then master components, and finally the kubelet.
+Practice referring to the kubernetes documentation page.
+Note: While upgrading kubelet,
+if you hit dependency issue while running the apt-get upgrade kubelet command,
+use the apt install kubelet=1.12.0-00 command instead
+
+
+apt install kubeadm=1.12.0-00
+kubeadm upgrade apply v1.12.0
+apt install kubelet=1.12.0-00
+
+
+Mark the master node as "Schedulable" again
+kubectl uncordon master
+
+####################  Backup and Restore ETCD    ##########################################
+What is the version of ETCD running on the cluster?
+Check the ETCD Pod or Process
+
+kubectl logs etcd-master -n kube-system | grep etcd
+
+At what address do you reach the ETCD cluster from your master node?
+
+Check the ETCD Service configuration in the ETCD POD
+
+kubectl describe pod etcd-master -n kube-system | grep url
+
+
+Where is the ETCD server certificate file located?
+Note this path down as you will need to use it later
+
+https://github.com/mmumshad/kubernetes-the-hard-way/blob/master/practice-questions-answers/cluster-maintenance/backup-etcd/etcd-backup-and-restore.md
+ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+     --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key \
+     snapshot save /tmp/snapshot-pre-boot.db
+
+
+
+####################  Test - Certificates - View TLS Certificates    ######################
+Identify the certificate file used for the kube-api server
+ps aux | grep kube-api
+
+Identify the Certificate file used to authenticate kube-apiserver as a client to ETCD Server
+Run the command 'cat /etc/kubernetes/manifests/kube-apiserver.yaml' and look for etcd configurations
+
+cat /etc/kubernetes/manifests/kube-apiserver.yaml | grep etcd
+
+Identify the key used to authenticate kubeapi-server to the kubelet server
+Look for kubelet-client-key option in the file /etc/kubernetes/manifests/kube-apiserver.yaml
+
+cat /etc/kubernetes/manifests/kube-apiserver.yaml | grep key
+
+
+Identify the ETCD Server Certificate used to host ETCD server
+Look for cert file option in the file /etc/kubernetes/manifests/etcd.yaml
+
+
+
+Identify the ETCD Server CA Root Certificate used to serve ETCD Server
+ETCD can have its own CA. So this may be a different CA certificate than the one used by kube-api server.
+Look for CA Certificate in file /etc/kubernetes/manifests/etcd.yaml | grep ca
+/etc/kubernetes/pki/etcd/ca.crt
+
+
+What is the Common Name (CN) configured on the Kube API Server Certificate?
+OpenSSL Syntax: openssl x509 -in file-path.crt -text -noout
+
+openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text
+
+
+What is the name of the CA who issued the Kube API Server Certificate?
+
+Run the command openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text and look for issuer
+
+Which of the below alternate names is not configured on the Kube API Server Certificate?
+Run the command openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text and look at Alternative Names
+
+
+What is the Common Name (CN) configured on the ETCD Server certificate?
+
+Run the command openssl x509 -in /etc/kubernetes/pki/etcd/server.crt -text and look for Subject CN.
+
+
+
+How long, from the issued date, is the Kube-API Server Certificate valid for?
+File: /etc/kubernetes/pki/apiserver.crt
+
+
+
+
+
+How long, from the issued date, is the Root CA Certificate valid for?
+File: /etc/kubernetes/pki/ca.crt
+
+Run the command 'openssl x509 -in /etc/kubernetes/pki/ca.crt -text' and look for validity
+
+
+Kubectl suddenly stops responding to your commands. Check it out! Someone recently modified the /etc/kubernetes/manifests/etcd.yaml file
+You are asked to investigate and fix the issue. Once you fix the issue wait for sometime for kubectl to respond. Check the logs of the ETCD container.
+
+
+
+The kube-api server stopped again! Check it out. Inspect the kube-api server logs and identify the root cause and fix the issue.
+Run docker ps -a command to identify the kube-api server container. Run docker logs container-id command to view the logs.
+
+ETCD has its own CA. The right CA must be used for the ETCD-CA file in /etc/kubernetes/manifests/kube-apiserver.yaml. View answer at /var/answers/kube-apiserver.yaml
+
+
+
+The kube-api server stops responding one day when it tries to connect to ETCD server.
+Inspect and fix the issue. If the certificate is expired, sign a new certificate by the CA and configure it to be used by the kube-api server
+
+openssl x509 -req -in /etc/kubernetes/pki/apiserver-etcd-client.csr -CA /etc/kubernetes/pki/etcd/ca.crt -CAkey /etc/kubernetes/pki/etcd/ca.key -CAcreateserial -out /etc/kubernetes/pki/apiserver-etcd-client.crt
+
+####################   Certificates and API    ############################################
+Create a CertificateSigningRequest object with the name akshay with the contents of the akshay.csr file
+
+
+What is the Condition of the newly created Certificate Signing Request object?
+kubectl get csr
+
+Approve the CSR Request
+kubectl certificate approve akshay
+
+Who requested the csr-* request?
+
+kubectl get csr
+
+You are not aware of a request coming in. What groups is this CSR requesting access to?
+Check the details about the request. Preferebly in YAML.
+
+kubectl get csr agent-smith -o yaml
+
+That doesn't look very right. Reject that request.
+
+kubectl certificate deny agent-smith
+
+Let's get rid of it. Delete the new CSR object
+kubectl delete csr agent-smith
+
+####################   kubeConfig    ######################################################
+Where is the default kubeconfig file located in the current environment?
+Find the current home directory by looking at the HOME environment variable
+
+Look for the kube config file under /root/.kube
+
+
+How many clusters are defined in the default kubeconfig file?
+
+Run the kubectl config view command and count the number of clusters
+
+kubectl config view
+
+How many Users are defined in the default kubeconfig file?
+
+
+A new kubeconfig file named 'my-kube-config' is created. It is placed in the /root directory. How many clusters are defined in the kubectl file?
+kubectl config view --kubeconfig my-kube-config
+
+
+I would like to use the dev-user to access test-cluster-1. Set the current context to the right one so I can do that.
+Once the right context is identified, use the 'kubectl config use-context' command.
+Run the command
+kubectl config --kubeconfig=/root/my-kube-config use-context research
+
+
+We don't want to have to specify the kubeconfig file option on each command. Make the my-kube-config file the default kubeconfig.
+Replace the contents in the default kubeconfig file with the content from my-kube-config file.
+
+
+
+With the current-context set to research, we are trying to access the cluster. However something seems to be wrong. Identify and fix the issue.
+Try running the kubectl get pods command and look for the error. All users certificates are stored at /etc/kubernetes/pki/users
+
+####################  Role Based Access Controls     ######################################
+
+
+Inspect the environment and identify the authorization modes configured on the cluster.
+Check the kube-api server settings
+
+Run the command kubectl describe pod kube-apiserver-master -n kube-system and look for --authorization-mode
+
+How many roles exist in the default namespace?
+kubectl get roles
+
+How many roles exist in all namespaces together?
+kubectl get roles --all-namespaces
+
+What are the resources the weave-net role in the kube-system namespce is given access to?
+kubectl describe role weave-net -n kube-system
+- n means namespace
+
+What actions can the weave-net role perform on configmaps
+Check the verbs associated to the weave-net role
+
+Which account is the weave-net role assigned to it?
+kubectl describe rolebinding weave-net -n kube-system
+
+A user dev-user is created. User's details have been added to the kubeconfig file. Inspect the permissions granted to the user. Check if the user can list pods in the default namespace.
+Use the --as dev-user option with kubectl to run commands as the dev-user
+
+kubectl get pods --as dev-user
+
+The dev-user is trying to get details about the dark-blue-app pod in the blue namespace. Investigate and fix the issue.
+We have created the required roles and rolebindings, but something seems to be wrong.
+Create the necessary roles and role bindings required for the dev-user to create,
+list and delete pods in the default namespace.
+Use the given spec
+
+ubectl delete role deploy-role
+kubectl edit  role deploy-role -n blue
+kubectl edit  role deploy-role -n blue
+
+kubectl get roles
+kubectl get rolebindings
+kubectl get clusterroles
+kubectl get clusterrolebindings
+kubectl get clusterrole system:node -o yaml
+
+####################  Security - Authorization - ClusterRoles     #########################
+How many ClusterRoles do you see defined in the cluster?
+kubectl get clusterroles --no-headers | wc -l
+kubectl get clusterroles --no-headers -o json | jq '.items | length'
+
+
+How many ClusterRoleBindings exist on the cluster?
+kubectl get clusterrolebindings --no-headers | wc -l
+
+What namespace is the cluster-admin clusterrole part of?
+kubectl describe clusterroles cluster-admin
+
+What user/groups are the cluster-admin role bound to?
+The ClusterRoleBinding for the role is with the same name.
+
+kubectl describe clusterrolebinding cluster-admin
+
+
+What level of permission does the cluster-admin role grant?
+Inspect the cluster-admin role's privileges
+
+
+
+A new user michelle joined the team. She will be focusing on the nodes in the cluster.
+Create the required ClusterRoles and ClusterRoleBindings so she gets access to the nodes.
+The kubeconfig file has been configured with her credentials.
+
+####################  Image Security     ##################################################
+We have an application running on our cluster. Let us explore it first. What image is the application using?
+kubectl describe deployments  | grep Image
+
+
+We decided to use a modified version of the application from an internal private registry. Update the image of the deployment to use a new image from myprivateregistry.com:5000
+The registry is located at myprivateregistry.com:5000. Don't worry about the credentials for now. We will configure them in the upcoming steps.
+kubectl edit deployments  web
+
+
+
+Create a secret object with the credentials required to access the registry
+Name: private-reg-cred
+Username: dock_user
+Password: dock_password
+Server: myprivateregistry.com:5000
+Email: dock_user@myprivateregistry.com
+
+kubectl create secret docker-registry private-reg-cred --docker-username=dock_user --docker-password=dock_password --docker-server=myprivateregistry.com:5000 --docker-email=dock_user@myprivateregistry.com
+
+
+Configure the deployment to use credentials from the new secret to pull images from the private registry
+
+imagePullSecrets:
+- name:
+####################  Security context     ##################################################
+What is the user used to execute the sleep process within the 'ubuntu-sleeper' pod?
+in the current(default) namespace
+kubectl exec ubuntu-sleeper whoami
+
+
+Edit the pod 'ubuntu-sleeper' to run the sleep process with user ID 1010.
+Note: Only make the necessary changes. Do not modify the name or image of the pod.
+
+securityContext:
+    runAsUser: 1010
+
+--------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-pod
+spec:
+  securityContext:
+    runAsUser: 1001
+  containers:
+  -  image: ubuntu
+     name: web
+     command: ["sleep", "5000"]
+     securityContext:
+      runAsUser: 1002
+
+  -  image: ubuntu
+     name: sidecar
+     command: ["sleep", "5000"]
+---------
+
+Try to run the below command in the pod 'ubuntu-sleeper' to set the date. Are you allowed to set date on the POD?
+date -s '19 APR 2012 11:14:00'
+
+kubectl exec -it ubuntu-sleeper -- date -s '19 APR 2012 11:14:00'
+
+
+securityContext:
+      capabilities:
+        add: ["SYS_TIME"]
+
+####################   Network Polices      ##################################################
+How many network policies do you see in the environment?
+We have deployed few web applications, services and network policies. Inspect the environment.
+kubectl get networkpolicy
+
+Which pod is the Network Policy applied on?
+kubectl get networkpolicy
+
+What type of traffic is this Network Policy configured to handle?
+kubectl describe networkpolicy
+
+####################   Persistenet Volume      ################################################
+We have deployed a POD. Inspect the POD and wait for it to start running.
+kubectl get pods
+
+The application stores logs at location /log/app.log. View the logs.
+ kubectl exec webapp cat /log/app.log
+
+Configure a volume to store these logs at /var/log/webapp on the host
+Use the spec given on the right.
+
+--------------
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+spec:
+  containers:
+  - name: event-simulator    image: kodekloud/event-simulator
+    env:
+    - name: LOG_HANDLERS
+      value: file
+    volumeMounts:
+    - mountPath: /log
+      name: log-volume
+  volumes:
+  - name: log-volume
+    hostPath:
+      # directory location on host
+      path: /var/log/webapp
+      # this field is optional
+      type: Directorymaster
+---------------------------------
+
+Create a 'Persistent Volume' with the given specification.
+------------------
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-log
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 100Mi
+  hostPath:
+    path: /pv/log
+------------------
+
+Let us claim some of that storage for our application. Create a 'Persistent Volume Claim' with the given specification.
+------------
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: claim-log-1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Mi
+------------
+
+What is the state of the Persistent Volume Claim?
+kubectl get pvc
+
+What is the state of the Persistent Volume?
+kubectl get pv
+
+Why is the Claim not bound to the available Persistent Volume?
+kubectl describe  pvc
+
+
+Update the Access Mode on the claim to bind it to the PVC.
+Delete and recreate the claim-log-1
+
+kubectl delete pvc claim-log-1
+
+------------------------------
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: claim-log-1spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Mi
+------------------------------
+
+
+Update the webapp pod to use the persistent volume claim as its storage.
+Replace hostPath configured earlier with the newly created PersistentVolumeClaim
+
+delete the pod and recreate it with the below spec.
+
+------------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+spec:
+  containers:
+  - name: event-simulator
+    image: kodekloud/event-simulator
+    env:
+    - name: LOG_HANDLERS
+      value: file
+    volumeMounts:
+    - mountPath: /log
+      name: log-volume
+
+  volumes:
+  - name: log-volume
+    persistentVolumeClaim:
+      claimName: claim-log-1
+------------
+
+What is the Reclaim Policy set on the Persistent Volume - 'pv-log'
+kubectl get pv
+
+Try deleting the PVC and notice what happens.
+kubectl delete pvc claim-log-1
+but you have to delete the pod first
+####################  Networking      ################################################
+What is the IP address assigned to the master node on this interface?
+kubectl get nodes -o wide
+
+What is the MAC address of the interface on the master node?
+ip link show ens3
+
+What is the MAC address assigned to node02?
+ arp node02
+
+
+We use Docker as our container runtime. What is the interface/bridge created by Docker on this host?
+ip link | grep docker
+
+What is the state of the interface docker0?
+ip link show docker0
+
+If you were to ping google from the master node, which route does it take?
+What is the IP address of the Default Gateway?
+ip route show default
+
+What is the port the kube-scheduler is listening on in the master node?
+netstat -nplt | grep kube-scheduler
+
+Notice that ETCD is listening on two ports.
+Which of these have more client connections established?
+
+netstat -anp | grep etcd
+2379
+
+Correct! That's because 2379 is the port of ETCD to which all control plane components connect to.
+2380 is only for etcd peer-to-peer connectivity. When you have multiple master nodes. In this case we don't.
+####################  Networking CNI Weave      ############################################
+Inspect the kubelet service and identify the network plugin configured for Kubernetes.
+ps -aux | grep kubelet | grep plugin=
+
+What is the path configured with all binaries of CNI supported plugins?
+ps -aux | grep kubelet | grep
+take a look to this path
+--cni-bin-dir
+
+
+Identify which of the below plugins is not available in the list of available CNI plugins on this host
+Run the command 'ls /opt/cni/bin' and identify the one not present
+
+What is the CNI plugin configured to be used on this kubernetes cluster?
+Run the command ls /etc/cni/net.d/ and identify the name of the plugin
+
+What binary executable file will be run by kubelet after a container and its associated namespace are created.
+Look at the type field in file /etc/cni/net.d/10-weave.conf
+
+
+What is the Networking Solution used by this cluster?
+ls -l  /etc/cni/net.d/
+
+How many weave agents/peers are deployed in this cluster?
+Run the command kubectl get pods -n kube-system and count weave pods
+kubectl get pods -n kube-system | grep weave
+
+
+On which nodes are the weave peers present?
+kubectl get pods --all-namespaces -o wide | grep weave
+
+
+
+Identify the name of the bridge network/interface created by weave on each node
+ip addr
+ifconfig
+
+What is the POD IP address range configured by weave?
+ip addr show weave
+
+What is the default gateway configured on the PODs scheduled on node03?
+Try scheduling a pod on node03 and check ip route output
+
+kubectl get pod --all-namespaces -o wide | grep node03
+
+kubectl run nginx --image=nginx  --replicas=7
+kubectl get pod --all-namespaces -o wide | grep node03
+
+kubectl exec -it nginx-64f497f8fd-4rbqj  -- /bin/bash
+
+Deploy weave-net networking solution to the cluster
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+
+Identify the name of the bridge network/interface created by weave on each node
+ip link
+
+What network range are the nodes in the cluster part of?
+
+Run the command ip addr and look at the IP address assigned to the ens3 interfaces. Derive network range from that.
+
+
+What is the range of IP addresses configured for PODs on this cluster?
+The network is configured with weave.
+Check the weave pods logs using command kubectl logs <weave-pod-name> weave -n kube-system and look for ipalloc-range
+
+kubectl logs weave-net-xrzcf weave -n kube-system | grep  ipalloc-range
+
+What is the IP Range configured for the services within the cluster?
+Inspect the setting on kube-api server by running on command ps -aux | grep kube-api
+--service-cluster-ip-range=
+
+How many kube-proxy pods are deployed in this cluster
+kubectl get pods -n kube-system
+
+What type of proxy is the kube-proxy configured to use?
+kubectl logs kube-proxy-qsg4z -n kube-system
+
+kube-proxy daemonset # to ensure that all nodes has kube-proxy pod
+
+####################  CoreDNS      ################################################
+Identify the DNS solution implemented in this cluster.
+kubectl get pods -n kube-system | grep dns
+
+How many pods of the DNS server are deployed?
+kubectl get pods -n kube-system | grep dns| wc -l
+
+What is the name of the service created for accessing CoreDNS?
+kubectl get service -n kube-system
+
+What is the IP of the CoreDNS server that should be configured on PODs to resolve services?
+kubectl get service -n kube-system
+
+Where is the configuration file located for configuring the CoreDNS service?
+kubectl exec coredns-pod-name -n kube-system ps
+
+How is the Corefile passed in to the CoreDNS POD?
+configure as configMap
+
+What is the name of the ConfigMap object created for Corefile?
+kubectl get configmap -n kube-system
+
+What is the root domain/zone configured for this kubernetes cluster?
+kubectl describe configmap coredns -n kube-system # look after kubernetes
+
+
+
+Which of the names CANNOT be used to access the HR service from the test pod?
+Which of the below name can be used to access the payroll service from the test application?
+
+
+kubectl exec test curl web-service.payroll.svc
+
+
+
+From the hr pod nslookup the mysql service and redirect the output to a file /root/nslookup.out
+Run the command kubectl exec -it hr nslookup mysql.payroll > /root/nslookup.out
+
+kubectl exec mysql  cat /etc/resolv.conf -n payroll
+Are DNS endpoints exposed?
+kubectl get ep kube-dns --namespace=kube-system
+
+kubectl exec -it dns-example cat /etc/resolv.conf -n kube-system
+
+kubectl exec -it coredns-78fcdf6894-n8wp9 cat /etc/hosts -n kube-system
+
+kubectl get endpoints
+
+####################    Ingress       ################################################
+
+We have deployed Ingress Controller, resources and applications. Explore the setup.
+Note: They are in different namespaces.
+kubectl get all --all-namespaces
+
+Which namespace is the Ingress Controller deployed in?
+kubectl get all --all-namespaces
+
+What is the name of the Ingress Controller Deployment?
+kubectl get all --all-namespaces
+
+Which namespace are the applications deployed in?
+kubectl get deployment --all-namespaces
+
+
+Which namespace is the Ingress Resource deployed in?
+kubectl get ingress --all-namespaces
+
+What is the Host configured on the ingress-resource?
+The host entry defines the domain name that users use to reach the application like www.google.com
+Run the command 'kubectl describe ingress --namespace app-space' and look at Host under the Rules section.
+
+What backend is the /wear path on the Ingress configured with?
+
+
+If the requirement does not match any of the configured paths what service are the requests forwarded to?
+Run the command 'kubectl describe ingress --namespace app-space' and look at the Default backend field.
+
+
+You are requested to change the URLs at which the applications are made available.
+Run the command 'kubectl edit ingress --namespace app-space' and change the path to the video streaming application.
+
+You are requested to add a new path to your ingress to make the food delivery application available to your customers.
+Run the command 'kubectl edit ingress --namespace app-space' and add a new Path entry for the new service.
+
+A new payment service has been introduced. Since it is critical, the new application is deployed in its own namespace.
+Identify the namespace in which the new application is deployed
+
+kubectl get deploy --all-namespaces
+kubectl get deployments --all-namespaces
+
+
+You are requested to make the new application available at /pay.
+Identify and implement the best approach to making this application available on the ingress controller and test to make sure its working. Look into annotations: rewrite-target as well.
+-----------------
+kind: Ingress
+metadata:
+  name: test-ingress
+  namespace: critical-space
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /pay
+        backend:
+          serviceName: pay-service
+          servicePort: 8282
+
+-----------------
+
+Let us now deploy an Ingress Controller. First, create a namespace called 'ingress-space'
+We will isolate all ingress related objects into its own namespace.
+
+kubectl create namespace ingress-space
+
+The NGINX Ingress Controller requires a ConfigMap object. Create a ConfigMap object in the ingress-space.
+Use the given spec on the right. No data needs to be configured in the ConfigMap.
+kubectl create configmap nginx-configuration --namespace ingress-space
+
+
+The NGINX Ingress Controller requires a ServiceAccount. Create a ServiceAccount in the ingress-space.
+Use the given spec on the right.
+kubectl create serviceaccount ingress-serviceaccount --namespace ingress-space
+
+We have created the Roles and RoleBindings for the ServiceAccount. Check it out!
+kubectl get roles,rolebindings --namespace ingress-space
+
+
+Let us now deploy the Ingress Controller. Create a deployment using the file given.
+The Deployment configuration is given at /root/ingress-controller.yaml. There are several issues with it. Try to fix them.
+
+Let us now create a service to make Ingress available to external users.
+--------------
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress
+  namespace: ingress-space
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    nodePort: 30080
+    name: http
+  - port: 443
+    targetPort: 443
+    protocol: TCP
+    name: https
+  selector:
+    name: nginx-ingress
+--------------
+
+kubectl expose deployment -n ingress-space ingress-controller --type=NodePort --port=80 --name=ingress --dry-run -o yaml >ingress.yaml
+
+
+Create the ingress resource to make the applications available at /wear and /watch on the Ingress service.
+-------------
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-wear-watch
+  namespace: app-space
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /wear
+        backend:
+          serviceName: wear-service
+          servicePort: 8080
+      - path: /watch
+        backend:
+          serviceName: video-service
+          servicePort: 8080
+-------------
+
+####################    Bootstrap Worker Node   ##########################################
+First create a bootstrap token that will be used by the node to join the cluster.
+Use the given spec
+
+
+Create ClusterRoleBinding required for the system:bootstrappers group to create CSR
+Use the given spec
+kubectl create clusterrolebinding crb-bootstrappers --clusterrole=system:node-bootstrapper --group=system:bootstrappers
+
+Create a bootstrap kubeconfig context file that node03 will use to initiate communication with the master
+Create the file on node03 using the given spec.
+move the given file to  /var/lib/kubelet/bootstrap-kubeconfig  without apply
+
+
+Configure the kubelet service to use the boostrap kubeconfig file
+A sample service definition file for kubelet is given in the /root folder of the master node.
+
+
+https://github.com/mmumshad/kubernetes-the-hard-way/blob/master/practice-questions-answers/install/bootstrap-worker-node-2/tls-bootstrap-worker-node-2.md
+
+
+you have to change name for cluster crt name
+and fix this into Node03
+update KUBELET_CGROUP_ARGS=--cgroup-driver=systemd to KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs
+into service file
+
+you have to check the crt path
+also you have to check the master ip into bootstrap-config
+
+####################    cluster Failuer   ##########################################
+The cluster is broken again. We tried deploying an application but it's not working. Troubleshoot and fix the issue.
+Start looking at the deployments.
+
+Check the status of all control plane components. Run the command kubectl get pods -n kube-system. Check the kube-scheduler manifests file.
+cd /etc/kubernetes/manifests/
+
+Scale the deployment app to 2 pods.
+kubectl scale deploy app --replicas=2
+
+Even though the depoyment was scaled to 2, the number of PODs does not seem to increase. Investigate and fix the issue.
+Inspect the component responsible for managing deployments and replicasets.
+
+/etc/kubernetes/manifests/kube-controller-manager.yaml
+
+Something is wrong with scaling again. We just tried scaling the deployment to 3 replicas. But it's not happening.
+Investigate and fix the issue
+
+####################    worker Node Failuer   ##########################################
+Fix the broken cluster
+go to node node01
+then start the kubelet serivce
+
+
+The cluster is broken again. Investigate and fix the issue.
+Check the status of services on the nodes. Check the service logs using journalctl -u kubelet. Start the stopped services. ssh node01 "service kubelet start"
+journalctl -u kubelet -f.
+
+fix the path in the below file
+/var/lib/kubelet/config.yaml
+then change the path for the csr.
+####################    Advanced kubectl   ##########################################
+Get the list of nodes in JSON format and store it in a file at /opt/outputs/nodes.json
+kubectl get nodes -o json > /opt/outputs/nodes.json
+
+
+Get the details of the node node01 in json format and store it in the file /opt/outputs/node01.json
+kubectl get node node01 -o json > /opt/outputs/node01.json
+
+
+Use JSON PATH query to fetch node names and store them in /opt/outputs/node_names.txt
+Remember the file should only have node names
+
+kubectl get nodes -o=jsonpath='{.items[*].metadata.name}' > /opt/outputs/node_names.txt
+
+
+
+Use JSON PATH query to retrieve the osImages of all the nodes and store it in a file /opt/outputs/nodes_os.txt
+The osImages are under the nodeInfo section under status of each node.
+
+ kubectl get nodes -o jsonpath='{.items[*].status.nodeInfo.osImage}' > /opt/outputs/nodes_os.txt
+
+
+
+A kube-config file is present at /root/my-kube-config. Get the user names from it and store it in a file /opt/outputs/users.txt
+Use the command kubectl config view --kubeconfig=/root/my-kube-config to view the custom kube-config
+
+kubectl config view --kubeconfig=my-kube-config -o jsonpath="{.users[*].name}" > /opt/outputs/users.txt
+
+
+
+A set of Persistent Volumes are available. Sort them based on their capacity and store the result in the file /opt/outputs/storage-capacity-sorted.txt
+
+kubectl get pv --sort-by=.spec.capacity.storage > /opt/outputs/storage-capacity-sorted.txt
+
+
+
+That was good, but we don't need all the extra details. Retrieve just the first 2 columns of output and store it in /opt/outputs/pv-and-capacity-sorted.txt
+The columns should be named NAME and CAPACITY. Use the custom-columns option. And remember it should still be sorted as in the previous question.
+kubectl get pv --sort-by=.spec.capacity.storage -o=custom-columns=NAME:.metadata.name,CAPACITY:.spec.capacity.storage > /opt/outputs/pv-and-capacity-sorted.txt
+
+
+Use a JSON PATH query to identify the context configured for the aws-user in the my-kube-config context file and store the result in /opt/outputs/aws-context-name.
+
+kubectl config view --kubeconfig=my-kube-config -o jsonpath="{.contexts[?(@.context.user=='aws-user')].name}" > /opt/outputs/aws-context-name
+
+
+
+####################    Mock Exam 1   ##########################################
+Deploy a pod named nginx-pod using the nginx:alpine image.
+Once done, click on the Next Question button in the top right corner of this panel. You may navigate back and forth freely between all questions. Once done with all questions, click on End Exam. Your work will be validated at the end and score shown. Good Luck!
+
+kubectl run nginx-pod --image=nginx:alpine --generator=run-pod/v1
+-----------------------------------------------------------------------------------------------
+Deploy a messaging pod using the redis:alpine image with the labels set to tier=msg.
+
+kubectl run messaging  --image=redis:alpine --generator=run-pod/v1
+kubectl label pods messaging tier=msg
+kubectl get pods --show-labels
+-----------------------------------------------------------------------------------------------
+Create a namespace named apx-x9984574
+kubectl create namespace apx-x9984574
+-----------------------------------------------------------------------------------------------
+Get the list of nodes in JSON format and store it in a file at /opt/outputs/nodes-z3444kd9.json
+kubectl get nodes -o json > /opt/outputs/nodes-z3444kd9.json
+-----------------------------------------------------------------------------------------------
+Create a service messaging-service to expose the messaging application within the cluster on port 6379.
+kubectl expose pod messaging --port=6379 --name messaging-service
+
+-----------------------------------------------------------------------------------------------
+Create a deployment named hr-web-app using the image kodekloud/webapp-color with 2 replicas
+kubectl create deployment hr-web-app --image=kodekloud/webapp-color
+kubectl scale deployment/hr-web-app --replicas=2
+-----------------------------------------------------------------------------------------------
+Create a static pod named static-busybox that uses the busybox image and the command sleep 1000
+
+kubectl run --restart=Never --image=busybox static-busybox --command -- sleep
+kubectl run --restart=Never --image=busybox static-busybox --dry-run -o yaml --command -- sleep 1000 > /etc/kubernetes/manifests/static-busybox.yaml
+
+-----------------------------------------------------------------------------------------------
+Create a POD in the finance namespace named temp-bus with the image redis:alpine.
+kubectl run temp-bus --image=redis:alpine -n finance --generator=run-pod/v1
+-----------------------------------------------------------------------------------------------
+A new application orange is deployed. There is something wrong with it. Identify and fix the issue.
+kubectl get pod orange -o yaml > or.yaml
+fix the file
+delete the running pod
+recreate it again
+-----------------------------------------------------------------------------------------------
+Expose the hr-web-app as service hr-web-app-service application on port 30082 on the nodes on the cluster
+The web application listens on port 8080
+
+kubectl expose deployment hr-web-app --type=NodePort --port=8080 --name=hr-web-app-service --dry-run -o yaml > hr-web-app-service.yaml
+then add nodePort: in the webapp-service.yaml
+-----------------------------------------------------------------------------------------------
+Use JSON PATH query to retrieve the osImages of all the nodes and store it in a file /opt/outputs/nodes_os_x43kj56.txt
+
+The osImages are under the nodeInfo section under status of each node.
+
+kubectl get nodes -o jsonpath='{.items[*].status.nodeInfo.osImage}' > /opt/outputs/nodes_os_x43kj56.txt
+
+-----------------------------------------------------------------------------------------------
+
+Create a Persistent Volume with the given specification.
+Volume Name: pv-analytics
+Storage: 100Mi
+Access modes: ReadWriteMany
+Host Path: /pv/data-analytics
+
+------------------
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-analytics
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 100Mi
+  hostPath:
+    path: /pv/data-analytics
+------------------
+-----------------------------------------------------------------------------------------------
+Take a backup of the etcd cluster and save it to /tmp/etcd-backup.db
+
+ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+     --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key \
+     snapshot save /tmp/etcd-backup.db
+
+     ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+          --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key \
+          snapshot status /tmp/etcd-backup.db -w table
+
+ETCDCTL_API=3 etcdctl version
+
+cat /etc/kubernetes/mainfests/etcd.yaml
+copy lines from theere, and run in the shell but in the end of the line put member list # will verify
+copy the lines and in the end put (snapshot save /tmp/etcd-backup.db)
+
+-----------------------------------------------------------------------------------------------
+create pod with volume .
+
+
+---------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+spec:
+  containers:
+  - name: redis
+    image: redis
+    volumeMounts:
+    - name: redis-storage
+      mountPath: /data/redis
+  volumes:
+  - name: redis-storage
+    emptyDir: {}
+---------
+-----------------------------------------------------------------------------------------------
+Create a new pod called super-user-pod with image busybox:1.28. Allow the pod to be able to set system_time
+The container should sleep for 4800 seconds
+
+-----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: super-user-pod
+spec:
+  containers:
+  - name: super-user-pod
+    image: busybox:1.28
+    command: ["sleep", "4800"]
+    securityContext:
+      capabilities:
+        add: ["SYS_TIME"]
+-----
+-----------------------------------------------------------------------------------------------
+create a pod called elephent with image: redis with CPU
+Request set 1 CPU and Memory Request as 200MiB
+
+kubectl run --generator-run-pod/v1 elephant --image=redis --dry-run -o elephent.yaml
+
+then edit the file and under resources add
+requests:
+  cpu: "1"
+  memory: "200MiB"
+
+then you have to run
+kubectl create -f elephent.yaml
+-----------------------------------------------------------------------------------------------
+A pod definition file is created at /root/use-pv.yaml. make use
+of this mainfest file and mount the persistent volume called
+pv-1. Ensure the pod is running and the PV is bound.
+
+mountPath:/data persistentVolimeClime name: my-pvc.
+
+kubctl get pv
+
+vim pvc.yaml
+
+Go to kubernetes documentation and search for persistentVolimeClime
+----------------
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 10Gi
+----------------
+run kubectl get pv
+
+edit file
+
+/root/use-pv.yaml
+Go to kubernetes documentation and search for claims as Volumes
+
+----------------
+apiVersion: v1
+kind: pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: use-pv
+  name: use-pv
+spec:
+  containers:
+  - image: nginx
+    name: use-pv
+    volumeMounts:
+    - mountPath: "/data"
+      name: mypod
+  volumes:
+  - name:mypod
+    persistentVolumeClaim:
+      claimName: my-pvc
+
+----------------
+-----------------------------------------------------------------------------------------------
+Create a ned deplyment called nginx-deploy.
+
+kubectl run nginx-deploy --image=nginx:1.16 --replicas=1 --record
+kubectl  set image deployment/nginx-deploy nginx-deploy=nginx:1.17 --record
+kubectl get deployments
+
+kubctl rollout history deployment nginx-deploy
+kubectl describe deployments. nginx-deploy | grep -i image
+-----------------------------------------------------------------------------------------------
+create new user called john.
+
+cat john.csr | base64 | tr -d "\n"
+
+vim john.yaml
+----------------
+apiVersion: certificates.k8s.io/v1beta1
+kind: CertificateSigningRequest
+metadata:
+  name: john-developer
+spec:
+  request: $(cat server.csr | base64 | tr -d '\n')
+  usages:
+  - digital signature
+  - key encipherment
+  - server auth
+----------------
+kubectl create -f  john.yaml
+kubectl get csr
+kubectl certificate approve john-developer
+kubectl create role developer --resourse=pods --verb=create,list,get,update,delete --namespace=development
+kubectl describe role developer -n development
+kubectl create rolebinding developer-role-binding --role=developer --user=john --namespace=development
+kubectl auth can-i update pods --namespace=development --as=john
+
+-----------------------------------------------------------------------------------------------
+
+create an nginx pod called nginx-resolver .
+
+kubectl run --generator-run-pod/v1 nginx-resolver --image=nginx
+kubectl expose pod nginx-resolver --name=nginx-resolvers-service --port=80 --target-port=80 --type=ClusterIP
+kubectl describe svc nginx-resolver-service
+kubectl get pod nginx-resolver -o wide
+
+kubectl run --generator-run-pod/v1 test-nslookup --image=busybox:1.28 --rm -it --nslookup nginx-resolver-service > /root/nginx.svc
+kubectl run --generator-run-pod/v1 test-nslookup --image=busybox:1.28 --rm -it --nslookup 10-32-0-5.default.pod > /root/nginx.pod
+
+-----------------------------------------------------------------------------------------------
+create static pod on node01 called nginx-critical
+
+run this in the master node
+kubectl run --generator-run-pod/v1 --image=nginx nginx-critical --dry-run -o yaml > nginx-critical.yaml
+copy the file to node01 in /etc/kubernetes/manifest/
+If you want check the pod run
+docker ps | grep -i nginx-critical
+kubectl get pods
+-----------------------------------------------------------------------------------------------
+
+####################    Mock Exam 2   #########################################################
+Create a new service account with the name pvviewer. Grant this Service account access to list all PersistentVolumes in the cluster by creating an appropriate cluster role called pvviewer-role and ClusterRoleBinding called pvviewer-role-binding.
+Next, create a pod called pvviewer with the image: redis and serviceAccount: pvviewer in the default namespace
+
+kubectl create serviceaccount pvviewer # create service account
+kubectl create clusterrole pvviewer-role --resource=persistentvolume --verb=list # create cluster roles
+kubectl create clusterrolebinding pvviewer-role-binding --clusterrole=pvviewer-role --serviceaccount=default:pvviewer # binding the clusterrole with the service account
+
+kubectl run --generator=run-pod/v1 pvviewer --image=redis --dry-run -o yaml > pod.yaml # that will create temeplet after we can edit that temeplet
+
+edit the pod.yaml
+under the name of the pod you have to put (serviceAccountName:pvviewer)
+-----------------------------------------------------------------------------------------------
+List the InternalIP of all nodes of the cluster. Save the result to a file /root/node_ips
+Answer should be in the format: InternalIP of master<space>InternalIP of node1<space>InternalIP of node2<space>InternalIP of node3 (in a single line)
+
+check the cheatsheet
+kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}' /root/node_ips
+
+-----------------------------------------------------------------------------------------------
+Create a pod called multi-pod with two containers.
+Container 1, name: alpha, image: nginx
+Container 2: beta, image: busybox, command sleep 4800.
+Environment Variables:
+container 1:
+name: alpha
+Container 2:
+name: beta
+
+Pod Name: multi-pod
+Container 1: alpha
+Container 2: beta
+Container beta commands set correctly?
+Container 1 Environment Value Set
+Container 2 Environment Value Set
+
+kubectl run --generator=run-pod/v1 alpha --image=nginx --dry-run -o yaml > multi-pod.yaml will create templet
+
+-------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-pod
+spec:
+  containers:
+  - image: nginx
+    name: alpha
+    env:
+    - name: name
+      value: alpha
+  - image:busybox
+    name:beta
+    command: ["sleep","4800"]
+    env:
+    - name: name
+      value: beta
+-------
+-----------------------------------------------------------------------------------------------
+Create a Pod called non-root-pod , image: redis:alpine
+runAsUser: 1000
+fsGroup: 2000
+Pod `non-root-pod` fsGroup configured
+Pod `non-root-pod` runAsUser configured
+
+
+
+
+
+-----------------------------------------------------------------------------------------------
+We have deployed a new pod called np-test-1 and a service called np-test-service. Incoming connections to this service are not working. Troubleshoot and fix it.
+Create NetworkPolicy, by the name ingress-to-nptest that allows incoming connections to the service over port 80
+Important: Don't delete any current objects deployed.
+
+Important: Don't Alter Existing Objects!
+NetworkPolicy: Applied to All sources (Incoming traffic from all pods)?
+NetWorkPolicy: Correct Port?
+NetWorkPolicy: Applied to correct Pod?
+
+
+kubectl describe pod np-test-1 # check the image and check the label
+kubectl describe svc np-test-service  # check if the label is same from the selector section you can verify that.
+kubectl run --generator=run-pod/v1 test-np --image=busybox:1.28 --rm -it -- sh # that will creat pod and it will be removed when fininsh the test
+inside the container run
+nc -z -v ow 2 np-test-serivce 80 # check the service name if it's resolve or not .
+
+kubectl get netpol  # check the rules inside the network policy
+kubectl describe netpol default-deny
+
+vim np.yaml
+check the kubernetes network policy
+we will create ingress policy
+--------
+apiVersion: networking.k8s.io/v1 # run kubectl api-versions | grep -i network
+kind: NetworkPolicy
+metadata:
+  name: ingress-to-nptest
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      run: np-test-1 # kubectl get pod np-test-1 --show-labels, this is the label for the pod
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports:
+    - port: 80
+      protocol: TCP
+--------
+
+kubectl create -f np.yaml
+kubectl run --generator=run-pod/v1 test-np --image=busybox:1.28 --rm -it -- sh # that will creat pod and it will be removed when fininsh the test
+nc -z -v ow 2 np-test-serivce 80
+
+-----------------------------------------------------------------------------------------------
+Taint the worker node node01 to be Unschedulable. Once done, create a pod called dev-redis, image redis:alpine to ensure workloads are not scheduled to this worker node. Finally, create a new pod called prod-redis and image redis:alpine with toleration to be scheduled on node01.
+key:env_type, value:production and operator:NoSchedule
+
+Key = env_type
+Value = production
+Effect = NoSchedule
+pod 'dev-redis' (no tolerations) is not scheduled on node01?
+Create a pod 'prod-redis' to run on node01
+
+kubectl taint node node01 env_type=production:NoSchedule
+kubectl describe nodes node01 | grep -i taint
+
+kubectl run --generator=run-pod/v1 dev-redis --image=redis:alpine
+
+kubectl get pod dev-redis -o yaml > prod-redis.yaml
+edit the file .
+-------------
+apiVersion:v1
+kind: Pod
+metadata:
+  name:prod-redis
+  namespace: default
+spec:
+  containers:
+  - image: redis:alpine
+    name:prod-redis
+  tolerations:
+  - effect: NoSchedule
+    key: env_type
+    operator: Equal
+    value: production
+-------------
+-----------------------------------------------------------------------------------------------
+Create a pod called hr-pod in hr namespace belonging to the production environment and frontend tier .
+image: redis:alpine
+Use appropriate labels and create all the required objects if it does not exist in the system already.
+hr-pod labeled with environment production?
+hr-pod labeled with frontend tier?
+
+kubectl create ns hr
+kubectl get ns
+kubectl run --generator=run-pod/v1 hr-pod --image=redis:alpine --labels=environment=production,tier=frontend  --namespace=hr
+kubectl -n hr get podd --show-labels
+
+-----------------------------------------------------------------------------------------------
+A kubeconfig file called super.kubeconfig has been created in /root. There is something wrong with the configuration. Troubleshoot and fix it.
+Fix /root/super.kubeconfig
+
+correct the port to 6443
+kubectl cluster-info --kubeconfig=/root/super.kubeconfig
+kubectl cluster-info --kubeconfig=/root/.kube/config # in the other case run this and check the config file .
+
+-----------------------------------------------------------------------------------------------
+We have created a new deployment called nginx-deploy. scale the deployment to 3 replicas. Has the replica's increased? Troubleshoot the issue and fix it.
+deployment has 3 replicas
+
+kubectl get deployment
+kubectl scale deployment nginx-deploy --replicas=3
+
+there is error check.
+
+kubectl -n kube-system get pods
+check the pods under /etc/kubernetes/mainfest/
+check the controller yaml file .
+sed -i 's/kube-contro1ler-manager/kube-controller-manager/g' kube-controller-manager.yaml
+-----------------------------------------------------------------------------------------------
+create a pod called lion with image redis:alpine.
+set the cpu limit to 2 cpu and memory limit to 500MiB
+
+
+------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lion
+spec:
+  containers:
+  - image: redis:alpine
+    name: lion
+    resources:
+      limits:
+        cpu: "2"
+        memory: "500Mi"
+------
+-----------------------------------------------------------------------------------------------
+
+
+
+
+
+how to create user :
+
+openssl genrsa -out kimo.key 2048
+openssl req -x509 -new -newkey kimo.pem -out kimo.csr -subj "/CN=kimo/O=admin"
+
+
+kubeadm alpha certs renew csr-name
+
+
+
+
+
+
+kubectl run nginx image=nginx --port=80 --record
+kubectl rollout history deployment nginx
+kubectl rollout status deployment nginx
+kubectl rollout undo deployment nginx  --to-revision=2
+
+
+
+
+
+kubectl run nginx image=nginx  --port=80  --record
+kubectl set image deployment nginx nginx=nginx:1.2
+kubectl rollout history deployment nginx
+kubectl rollout status deployment nginx
+kubectl rollout undo deployment nginx  --to-revision=2
+kubectl autoscale deployment nginx  --cpu-percent=50  -- min=1  -- max 2
+kubectl run nginx3  --image=nginx  --requests=cpu=200m  --limits=cpu=300m  --requests=memory=1Gi  --limits=memory=2Gi
+kubectl run hello  --schedule=”*/1 * * * *”  --restart=OnFailure  -- image=busybox  -- /bin/sh -c “date; echo Hello from the kubernetes cluster”
+kubectl port-forward redis-master-765d459796–258hz 6379:6379
+kubectl get pods redis-master-765d459796–258hz -o yaml
+kubectl create secret docker-registry  --dry-run=true registryhttps  --docker-server=https://example.com:5000  --docker-username=username  --docker-password=password --docker-email=docker@docker.com -o yaml
+kubectl create secret generic db-user-pass  --from-file=./username.txt  --from-file=./password.txt (echo -n ‘username’ > ./username.txt, echo -n ‘password’ > ./pass)
+kubectl get secrets -o yaml
+kubectl create secret generic db-pass  --from-literal=username=<username>  --from-lieral=password=<somebase64password>
+kubectl top node NODE_NAME
+kubectl top pod  --namespace=<namespace>
+kubectl top pod POD_NAME  --containers
+kubectl top pod -l name=myLabel
+Kubectl rollout resume deploy/nginx
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep username | awk ‘{print $1}’)
+
+
+
+
+
+
+
+Jsonpath
+kubectl config view --kubeconfig=my-kube-config -o=jsonpath="{.user[*].name}"
+
+
+
+kubectl get pv --sort-by=.spec.capacity.storage
+
+
+
+############################################################################################
+https://medium.com/faun/how-to-pass-certified-kubernetes-administrator-cka-exam-on-first-attempt-36c0ceb4c9e
+create user :
+
+1- create key .
+
+openssl genrsa -out kimo.key 2048
+2- create CSR
+openssl req -new -key kimo.key -out kimo-csr.pem -subj "/CN=kimo/O=app1/O=app2"
+openssl x509 -req -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 730 -in prudhvi.csr -out prudhvi.crt
+
+3- Manage TLS Certificates > in documentation
+4- kubectl certificate approve kimo
+5- kubectl create role kimo-admin --resource=pods  --verb=create,list,get,update,delete
+6- kubectl create rolebinding kimo-admin-rolepinding --role=kimo-admin --user=kimo
+7- kubectl auth can-i delete pods --as=kimo
+
+############################################################################################
+
+create service account
+
+1- kubectl create serviceaccount nginx
+2- kubectl create clusterrole nginx-role --resource=pods --verb=list,update
+3- kubectl create clusterrolebinding nginx-role-binding --clusterrole=nginx-role --serviceaccount=default:nginx
+
+
+under spec in pod file you can add
+serviceAccountName:nginx
+############################################################################################
+How to create service :
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+spec:
+  type: NodePort
+  selector:
+    name: simple-webapp
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+
+
+
+Or You can user :
+kubectl expose pod redis --port=6379  --selector=tier=db --name redis-service
+############################################################################################
+Manual Scheduling
+---------------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  nodeName: node01
+  containers:
+  -  image: nginx
+     name: nginx
+---------------
+
+############################################################################################
+kubectl get pods --selector env=dev
+kubectl get all --selector env=prod,bu=finance,tier=frontend
+############################################################################################
+static pods
+kubectl get pods --all-namespaces and look for those with -master appended in the name
+
+############################################################################################
+how to monitoring cluster
+git clone https://github.com/kodekloudhub/kubernetes-metrics-server
+kubectl create -f .
+
+kubectl top nodes
+kubectl top pods
+
+Logs
+kubectl logs pod-name container-name
+kubectl logs webapp-2 simple-webapp
+
+############################################################################################
